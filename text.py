@@ -8,6 +8,7 @@ import time
 
 if __name__ == '__main__':
 
+    CROPPED_DIR = "cropped"
     t = time.time()
 
     parser = argparse.ArgumentParser()
@@ -44,6 +45,8 @@ if __name__ == '__main__':
     cudnn.deterministic = True
     opt.num_gpu = torch.cuda.device_count()
 
-    recognition.demo(opt, 'model/TPS-ResNet-BiLSTM-Attn.pth', "cropped/")
+    labels = ["indomi", "milo"]
+    recognition.demo(opt, 'model/TPS-ResNet-BiLSTM-Attn.pth', "{}/".format(CROPPED_DIR), labels)
 
     print("elapsed time : {}s".format(time.time() - t))
+

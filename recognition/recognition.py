@@ -5,11 +5,12 @@ import torch.utils.data
 from recognition.dataset import RawDataset, AlignCollate
 from recognition.model import Model
 from recognition.utils import CTCLabelConverter, AttnLabelConverter
+import os
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def demo(opt, savedModel, imageFolder):
+def demo(opt, savedModel, imageFolder, labels):
     """ model configuration """
     if 'CTC' in opt.Prediction:
         converter = CTCLabelConverter(opt.character)
@@ -74,15 +75,20 @@ def demo(opt, savedModel, imageFolder):
             preds_prob = F.softmax(preds, dim=2)
             preds_max_prob, _ = preds_prob.max(dim=2)
             for img_name, pred, pred_max_prob in zip(image_path_list, preds_str, preds_max_prob):
+                os.remove(img_name)
                 if 'Attn' in opt.Prediction:
                     pred_EOS = pred.find('[s]')
                     pred = pred[:pred_EOS]  # prune after "end of sentence" token ([s])
                     pred_max_prob = pred_max_prob[:pred_EOS]
-
-                # calculate confidence score (= multiply of pred_max_prob)
-                confidence_score = pred_max_prob.cumprod(dim=0)[-1]
-
-                print(f'{img_name:25s}\t{pred:25s}\t{confidence_score:0.4f}')
-                log.write(f'{img_name:25s}\t{pred:25s}\t{confidence_score:0.4f}\n')
-
+                contains = False
+                for label in labels:
+                    if label in pred:
+                        # calculate confidence score (= multiply of pred_max_prob)
+                        confidence_score = pred_max_prob.cumprod(dim=0)[-1]
+                        print(f'{img_name:25s}\t{label:25s}\t{confidence_score:0.4f}')
+                        log.write(f'{img_name:25s}\t{label:25s}\t{confidence_score:0.4f}\n')
+                        contains = True
+                        break
+                if contains:
+                    break
             log.close()
