@@ -4,8 +4,12 @@ import argparse
 import torch.backends.cudnn as cudnn
 import string
 import torch
+import time
 
 if __name__ == '__main__':
+
+    t = time.time()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--workers', type=int, help='number of data loading workers', default=4)
     parser.add_argument('--batch_size', type=int, default=192, help='input batch size')
@@ -30,7 +34,7 @@ if __name__ == '__main__':
 
     opt = parser.parse_args()
 
-    detection.detect("test/milo", "model/craft_mlt_25k.pth")
+    detection.detect("test/milo.jpeg", "model/craft_mlt_25k.pth")
 
     """ vocab / character number configuration """
     if opt.sensitive:
@@ -41,3 +45,5 @@ if __name__ == '__main__':
     opt.num_gpu = torch.cuda.device_count()
 
     recognition.demo(opt, 'model/TPS-ResNet-BiLSTM-Attn.pth', "cropped/")
+
+    print("elapsed time : {}s".format(time.time() - t))

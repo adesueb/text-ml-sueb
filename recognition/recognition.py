@@ -1,14 +1,10 @@
-import string
-import argparse
-
 import torch
-import torch.backends.cudnn as cudnn
-import torch.utils.data
 import torch.nn.functional as F
+import torch.utils.data
 
-from utils import CTCLabelConverter, AttnLabelConverter
-from dataset import RawDataset, AlignCollate
-from model import Model
+from recognition.dataset import RawDataset, AlignCollate
+from recognition.model import Model
+from recognition.utils import CTCLabelConverter, AttnLabelConverter
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -90,5 +86,3 @@ def demo(opt, savedModel, imageFolder):
                 log.write(f'{img_name:25s}\t{pred:25s}\t{confidence_score:0.4f}\n')
 
             log.close()
-
-
