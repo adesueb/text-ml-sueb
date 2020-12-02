@@ -33,11 +33,9 @@ def str2bool(v):
 
 
 def createBoundingBox(image, boxes):
-    import cv2
     images = []
     for index, box in enumerate(boxes):
         cropped_image = image[int(box[0][1]):int(box[3][1]), int(box[0][0]):int(box[1][0])]
-        cv2.imwrite('cropped/crop{}.jpg'.format(index), cropped_image)
         images.append(cropped_image)
     return images
 

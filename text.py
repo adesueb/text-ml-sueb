@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     opt = parser.parse_args()
 
-    detection.detect("test/milo.jpeg", "model/craft_mlt_25k.pth")
+    images = detection.detect("test/milo.jpeg", "model/craft_mlt_25k.pth")
 
     """ vocab / character number configuration """
     if opt.sensitive:
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     opt.num_gpu = torch.cuda.device_count()
 
     labels = ["indomi", "milo"]
-    recognition.demo(opt, 'model/TPS-ResNet-BiLSTM-Attn.pth', "{}/".format(CROPPED_DIR), labels)
+    recognition.demo(opt, 'model/TPS-ResNet-BiLSTM-Attn.pth', images, labels)
 
     print("elapsed time : {}s".format(time.time() - t))
 

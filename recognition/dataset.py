@@ -215,6 +215,18 @@ class LmdbDataset(Dataset):
 
         return (img, label)
 
+class ArrayDataset(Dataset):
+    def __init__(self, data, opt):
+        self.opt = opt
+        self.data = data
+        self.nSamples = len(data)
+
+    def __len__(self):
+        return self.nSamples
+
+    def __getitem__(self, index):
+        return Image.fromarray(self.data[index], "RGB").convert('L'), "No. {}".format(index)
+
 
 class RawDataset(Dataset):
 
@@ -250,7 +262,7 @@ class RawDataset(Dataset):
             else:
                 img = Image.new('L', (self.opt.imgW, self.opt.imgH))
 
-        return (img, self.image_path_list[index])
+        return img, self.image_path_list[index]
 
 
 class ResizeNormalize(object):
